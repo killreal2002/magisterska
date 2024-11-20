@@ -1,0 +1,57 @@
+# Flask Test Code
+
+# 1. Performance Testing
+from locust import HttpUser, task, between
+
+class FlaskPerformanceTest(HttpUser):
+    wait_time = between(1, 2)
+
+    @task
+    def test_homepage(self):
+        self.client.get("/")
+
+
+# 2. Scalability Testing
+from flask import Flask
+from flask_caching import Cache
+import time
+
+app = Flask(__name__)
+app.config['CACHE_TYPE'] = 'RedisCache'
+app.config['CACHE_REDIS_URL'] = 'redis://localhost:6379/0'
+cache = Cache(app)
+
+@app.route('/nocache')
+def without_cache():
+    start_time = time.time()
+    data = "expensive_database_query_result"
+    return f"Without cache: {time.time() - start_time}s"
+
+@app.route('/cache')
+def with_cache():
+    start_time = time.time()
+    data = cache.get("data_key")
+    if not data:
+        data = "expensive_database_query_result"
+        cache.set("data_key", data, timeout=60)
+    return f"With cache: {time.time() - start_time}s"
+
+
+# 3. Security Testing - SQL Injection
+from flask import Flask, request, jsonify
+import sqlite3
+
+app = Flask(__name__)
+
+@app.route('/test_sql_injection', methods=['GET'])
+def test_sql_injection():
+    username = request.args.get('username', '')
+    unsafe_query = f"SELECT * FROM users WHERE username = '{username}'"
+    try:
+        conn = sqlite3.connect('test.db')
+        cursor = conn.cursor()
+        cursor.execute(unsafe_query)
+        conn.commit()
+        return jsonify({"message": "Vulnerable to SQL Injection"})
+    except sqlite3.Error as e:
+        return jsonify({"message": f"Protected from SQL Injection: {e}"})
