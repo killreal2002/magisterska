@@ -1,0 +1,71 @@
+# Ruby on Rails Test Code
+
+# 1. Performance Testing
+# Використовується Siege для тестування продуктивності.
+# Команда для запуску тестування:
+# siege -c100 -t1M http://localhost:3000/
+
+# 2. Scalability Testing - Використання Redis для кешування
+require 'redis'
+
+redis = Redis.new
+
+# Without caching
+start_time = Time.now
+data = "expensive_database_query_result"
+puts "Without cache: #{Time.now - start_time}s"
+
+# With caching
+start_time = Time.now
+cached_data = redis.get("data_key")
+if cached_data.nil?
+  redis.set("data_key", "expensive_database_query_result", ex: 60)
+end
+puts "With cache: #{Time.now - start_time}s"
+
+# 3. Security Testing - SQL Injection
+def test_sql_injection(username)
+  unsafe_query = "SELECT * FROM users WHERE username = '#{username}'"
+  begin
+    result = ActiveRecord::Base.connection.execute(unsafe_query)
+    puts "Vulnerable to SQL Injection!" if result.any?
+  rescue ActiveRecord::StatementInvalid => e
+    puts "Protected from SQL Injection: #{e.message}"
+  end
+end
+
+test_sql_injection("admin' OR 1=1 --")
+
+# 4. Testing Tools - Використання RSpec
+require 'rails_helper'
+
+RSpec.describe "HomePage", type: :request do
+  it "returns a successful response" do
+    get "/"
+    expect(response).to have_http_status(:success)
+  end
+end
+
+RSpec.describe "Login", type: :request do
+  it "allows a user to login" do
+    post "/login", params: { username: "test", password: "test" }
+    expect(response).to have_http_status(:success)
+  end
+end
+
+# 5. Documentation
+# Використання Rswag для генерації документації API.
+# 1. Додайте Rswag до Gemfile:
+# gem 'rswag'
+
+# 2. Встановіть Rswag:
+# rails g rswag:install
+
+# 3. Налаштуйте Swagger Schema:
+RSpec.configure do |config|
+  config.swagger_root = Rails.root.to_s + '/swagger'
+end
+
+# 4. Запустіть сервер:
+# rails s
+# Відкрийте `/api-docs` у браузері для перегляду автоматично згенерованої документації.
