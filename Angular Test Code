@@ -1,0 +1,68 @@
+// Angular Test Code
+
+// 1. Performance Testing
+// Використовується Lighthouse для оцінки продуктивності
+// Запустіть команду:
+// lighthouse http://localhost:4200 --view
+
+// 2. Scalability Testing
+// Використання Service Workers для підтримки кешування
+// Додайте PWA через Angular CLI:
+ng add @angular/pwa
+
+// 3. Security Testing - Захист від XSS
+import { Component } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
+@Component({
+  selector: 'app-root',
+  template: `<div [innerHTML]="safeHtml"></div>`
+})
+export class AppComponent {
+  safeHtml: SafeHtml;
+
+  constructor(private sanitizer: DomSanitizer) {
+    const maliciousContent = '<img src="x" onerror="alert(\'XSS Attack\')">';
+    this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(maliciousContent);
+  }
+}
+
+// 4. Testing Tools - Використання Jasmine і Karma
+// Створіть тести у файлі app.component.spec.ts:
+
+import { TestBed } from '@angular/core/testing';
+import { AppComponent } from './app.component';
+
+describe('AppComponent', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [AppComponent],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.content span')?.textContent).toContain('app is running!');
+  });
+});
+
+// Запустіть тести через Angular CLI:
+ng test
+
+// 5. Documentation
+// Використання Compodoc для автоматичної генерації документації
+// Встановіть Compodoc:
+npm install -g @compodoc/compodoc
+
+// Згенеруйте документацію:
+npx compodoc -p tsconfig.json -s
+
+// Відкрийте браузер і перейдіть за адресою http://localhost:8080
