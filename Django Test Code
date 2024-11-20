@@ -1,0 +1,76 @@
+# Django Test Code
+
+# 1. Performance Testing
+import locust
+from locust import HttpUser, task, between
+
+class DjangoPerformanceTest(HttpUser):
+    wait_time = between(1, 2)
+
+    @task
+    def test_homepage(self):
+        self.client.get("/")
+
+
+# 2. Scalability Testing
+from django.core.cache import cache
+import time
+
+# Without caching
+start_time = time.time()
+data = "expensive_database_query_result"
+print("Without cache:", time.time() - start_time)
+
+# With caching
+cache.set("data_key", data, timeout=60)
+start_time = time.time()
+cached_data = cache.get("data_key")
+print("With cache:", time.time() - start_time)
+
+
+# 3. Security Testing - SQL Injection
+from django.db import connection
+
+def test_sql_injection():
+    unsafe_query = "SELECT * FROM auth_user WHERE username = '{}'".format("admin' OR 1=1 --")
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute(unsafe_query)
+            print("Vulnerable to SQL Injection!")
+        except Exception as e:
+            print("Protected from SQL Injection:", e)
+
+test_sql_injection()
+
+
+# 4. Testing Tools - Django's Built-in Testing Framework
+from django.test import TestCase
+
+class SimpleTest(TestCase):
+    def test_homepage(self):
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_login(self):
+        response = self.client.post("/login/", {"username": "test", "password": "test"})
+        self.assertEqual(response.status_code, 200)
+
+
+# 5. Documentation
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Django API",
+      default_version='v1',
+      description="API documentation for Django",
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
+urlpatterns += [
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+]
