@@ -1,0 +1,88 @@
+import matplotlib.pyplot as plt
+
+# Django Performance: Response Time vs Requests
+requests_django = [100, 200, 300, 400, 500]
+response_times_django = [120, 150, 200, 250, 300]
+
+plt.figure()
+plt.plot(requests_django, response_times_django, marker='o', label='Django Response Time')
+plt.title('Django Performance: Response Time vs Requests')
+plt.xlabel('Number of Requests')
+plt.ylabel('Response Time (ms)')
+plt.legend()
+plt.grid(True)
+plt.savefig('django_performance.png')
+
+# Flask Performance: Response Time vs Requests
+requests_flask = [100, 200, 300, 400, 500]
+response_times_flask = [100, 140, 190, 230, 270]
+
+plt.figure()
+plt.plot(requests_flask, response_times_flask, marker='o', label='Flask Response Time')
+plt.title('Flask Performance: Response Time vs Requests')
+plt.xlabel('Number of Requests')
+plt.ylabel('Response Time (ms)')
+plt.legend()
+plt.grid(True)
+plt.savefig('flask_performance.png')
+
+# Ruby on Rails Performance: Response Time vs Requests
+requests_rails = [100, 200, 300, 400, 500]
+response_times_rails = [110, 160, 210, 260, 310]
+
+plt.figure()
+plt.plot(requests_rails, response_times_rails, marker='o', label='Rails Response Time')
+plt.title('Ruby on Rails Performance: Response Time vs Requests')
+plt.xlabel('Number of Requests')
+plt.ylabel('Response Time (ms)')
+plt.legend()
+plt.grid(True)
+plt.savefig('rails_performance.png')
+
+# Angular Performance: Response Time vs Requests
+requests_angular = [100, 200, 300, 400, 500]
+response_times_angular = [90, 130, 170, 210, 250]
+
+plt.figure()
+plt.plot(requests_angular, response_times_angular, marker='o', label='Angular Response Time')
+plt.title('Angular Performance: Response Time vs Requests')
+plt.xlabel('Number of Requests')
+plt.ylabel('Response Time (ms)')
+plt.legend()
+plt.grid(True)
+plt.savefig('angular_performance.png')
+
+# Scalability: Cache vs No Cache (Example for Django)
+requests_cache = ["No Cache", "With Cache"]
+response_times_cache = [250, 125]
+
+plt.figure()
+plt.bar(requests_cache, response_times_cache, color=['red', 'green'])
+plt.title('Django Scalability: Cache vs No Cache')
+plt.xlabel('Cache Usage')
+plt.ylabel('Response Time (ms)')
+plt.savefig('django_scalability.png')
+
+# Security: Test Counts by Framework
+frameworks = ["Django", "Flask", "Rails", "Angular"]
+security_tests_passed = [10, 8, 9, 7]
+
+plt.figure()
+plt.bar(frameworks, security_tests_passed, color='blue')
+plt.title('Security Testing: Tests Passed by Framework')
+plt.xlabel('Frameworks')
+plt.ylabel('Number of Passed Tests')
+plt.savefig('security_tests.png')
+
+# Testing Tools: CI/CD Integration Time
+frameworks = ["Django", "Flask", "Rails", "Angular"]
+integration_times = [10, 12, 14, 9]  # Time in minutes
+
+plt.figure()
+plt.bar(frameworks, integration_times, color='purple')
+plt.title('Testing Tools: CI/CD Integration Time')
+plt.xlabel('Frameworks')
+plt.ylabel('Time (Minutes)')
+plt.savefig('ci_cd_integration_time.png')
+
+
